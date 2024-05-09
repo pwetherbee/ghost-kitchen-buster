@@ -13,7 +13,7 @@ setupOnInstalledListener();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.restaurantNames) {
     // Assuming your server endpoint is set up to receive POST requests at this route
-    fetch(`${DOMAIN}/api/checkGhostKitchens`, {
+    fetch(`${DOMAIN}/api/check`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
