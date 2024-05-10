@@ -1,4 +1,7 @@
+import { checkRestaurant } from "@/app/lib/check-restaurant";
 import { NextRequest, NextResponse } from "next/server";
+
+const MAX_CHECKS = 15;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -21,7 +24,7 @@ export async function POST(req: NextRequest) {
       const loc = await response.json();
       city = loc.city;
     } catch (error) {
-      console.error("Error fetching IP info:", error);
+      //   console.error("Error fetching IP info:", error);
       //   return NextResponse.json({
       //     error: "Error fetching location information",
       //   });
@@ -30,13 +33,26 @@ export async function POST(req: NextRequest) {
 
   const { restaurants }: { restaurants: string[] } = body;
 
+  const results = await Promise.all(
+    restaurants.slice(0, MAX_CHECKS).map(async (restaurant) => {
+      // Check if the restaurant is a ghost kitchen
+      const isGhost = await checkRestaurant(restaurant, city || "Chicago");
+      return {
+        restaurant,
+        isGhost,
+      };
+    })
+  );
+
+  console.log("Results:", results);
+
   return NextResponse.json({
     // Dummy data for demonstration purposes
     // turn each restaurant name into a key-value pair
-    // with the value being a random boolean
-    ...restaurants.reduce((acc, restaurant) => {
+
+    ...results.reduce((acc, restaurant) => {
       //@ts-ignore
-      acc[restaurant] = Math.random() < 0.5;
+      acc[restaurant.restaurant] = restaurant.isGhost;
       return acc;
     }, {}),
   });
