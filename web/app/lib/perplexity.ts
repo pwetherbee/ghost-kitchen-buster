@@ -13,7 +13,7 @@ export async function getPerplexityResponse(
 ) {
   const completion = await openai.chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama-3-sonar-large-32k-online",
+    model: "llama-3.1-sonar-large-128k-online",
     temperature,
   });
   return completion.choices[0].message.content;

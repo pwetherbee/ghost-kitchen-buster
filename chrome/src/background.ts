@@ -47,4 +47,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     sendResponse({ message: "All batches processed" });
     return true; // Indicates you wish to send a response asynchronously
   }
+
+  if (request.cartData) {
+    console.log("Received cart data:", request.cartData);
+  }
 });
